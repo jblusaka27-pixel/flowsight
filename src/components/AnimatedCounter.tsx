@@ -19,19 +19,26 @@ export function AnimatedCounter({
 }: AnimatedCounterProps) {
   const [displayValue, setDisplayValue] = useState(0);
 
+  const safeValue = isFinite(value) && !isNaN(value) ? value : 0;
+
   useEffect(() => {
+    if (!isFinite(safeValue) || isNaN(safeValue)) {
+      setDisplayValue(0);
+      return;
+    }
+
     let startValue = 0;
-    const increment = value / (duration / 16);
+    const increment = safeValue / (duration / 16);
     let currentValue = startValue;
     let animationFrameId: number;
 
     const animate = () => {
       currentValue += increment;
-      if (currentValue < value) {
+      if (currentValue < safeValue) {
         setDisplayValue(currentValue);
         animationFrameId = requestAnimationFrame(animate);
       } else {
-        setDisplayValue(value);
+        setDisplayValue(safeValue);
       }
     };
 
@@ -42,12 +49,14 @@ export function AnimatedCounter({
         cancelAnimationFrame(animationFrameId);
       }
     };
-  }, [value, duration]);
+  }, [safeValue, duration]);
+
+  const finalValue = isFinite(displayValue) && !isNaN(displayValue) ? displayValue : 0;
 
   return (
     <span className={className}>
       {prefix}
-      {displayValue.toFixed(decimals)}
+      {finalValue.toFixed(decimals)}
       {suffix}
     </span>
   );

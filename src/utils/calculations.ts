@@ -22,66 +22,94 @@ export interface LOSResult {
   adjustedSellOut: number;
   predictedLos: number;
   losStatus: 'critical' | 'optimal' | 'caution' | 'high';
+  desiredLos: number;
+}
+
+function sanitizeNumber(value: number, fallback: number = 0): number {
+  if (!isFinite(value) || isNaN(value)) {
+    return fallback;
+  }
+  return value;
+}
+
+function safeDivide(numerator: number, denominator: number, fallback: number = 0): number {
+  if (denominator === 0 || !isFinite(denominator) || isNaN(denominator)) {
+    return fallback;
+  }
+  const result = numerator / denominator;
+  return sanitizeNumber(result, fallback);
 }
 
 export function calculateLOS(data: LOSData): LOSResult {
-  const { sellOutHl, sellInHl, desiredLos, pendingOrders, receivedStock } = data;
+  try {
+    const { sellOutHl, sellInHl, desiredLos, pendingOrders, receivedStock } = data;
 
-  if (!sellOutHl || !sellInHl || sellInHl === 0 || isNaN(sellOutHl) || isNaN(sellInHl)) {
+    const safeSellOutHl = sanitizeNumber(sellOutHl);
+    const safeSellInHl = sanitizeNumber(sellInHl);
+    const safeDesiredLos = sanitizeNumber(desiredLos);
+    const safePendingOrders = sanitizeNumber(pendingOrders);
+    const safeReceivedStock = sanitizeNumber(receivedStock);
+
+    if (safeSellOutHl <= 0 || safeSellInHl <= 0) {
+      return getEmptyResult();
+    }
+
+    const sellOutCases = safeDivide(safeSellOutHl, HECTOLITER_TO_CASE);
+    const sellInCases = safeDivide(safeSellInHl, HECTOLITER_TO_CASE);
+    const currentLos = sanitizeNumber(safeDivide(safeSellOutHl, safeSellInHl) * 100);
+
+    let casesNeeded = 0;
+    let newSellOutHl = safeSellOutHl;
+    let losAfterSelling = currentLos;
+
+    if (safeDesiredLos > 0) {
+      const targetSellOutHl = sanitizeNumber((safeSellInHl * safeDesiredLos) / 100);
+      const additionalHlNeeded = sanitizeNumber(targetSellOutHl - safeSellOutHl);
+      casesNeeded = sanitizeNumber(safeDivide(additionalHlNeeded, HECTOLITER_TO_CASE));
+      newSellOutHl = sanitizeNumber(safeSellOutHl + additionalHlNeeded);
+      losAfterSelling = sanitizeNumber(safeDivide(newSellOutHl, safeSellInHl) * 100);
+    }
+
+    const newSellOutCases = sanitizeNumber(safeDivide(newSellOutHl, HECTOLITER_TO_CASE));
+
+    const newSellInHl = safeReceivedStock > 0
+      ? sanitizeNumber((safeReceivedStock * HECTOLITER_TO_CASE) + safeSellInHl)
+      : safeSellInHl;
+    const newSellInCases = sanitizeNumber(safeDivide(newSellInHl, HECTOLITER_TO_CASE));
+    const losAfterReceiving = sanitizeNumber(safeDivide(safeSellOutHl, newSellInHl) * 100);
+
+    const adjustedSellOut = sanitizeNumber(sellOutCases + safePendingOrders);
+    const predictedLos = sanitizeNumber(safeDivide(adjustedSellOut, sellInCases) * 100);
+
+    const losStatus = getLosStatus(currentLos);
+
+    return {
+      currentLos,
+      sellOutCases,
+      sellInCases,
+      casesNeeded,
+      newSellOutHl,
+      newSellOutCases,
+      losAfterSelling,
+      newSellInHl,
+      newSellInCases,
+      losAfterReceiving,
+      adjustedSellOut,
+      predictedLos,
+      losStatus,
+      desiredLos: safeDesiredLos,
+    };
+  } catch (error) {
+    console.error('Calculation error:', error);
     return getEmptyResult();
   }
-
-  const sellOutCases = sellOutHl / HECTOLITER_TO_CASE;
-  const sellInCases = sellInHl / HECTOLITER_TO_CASE;
-  const currentLos = (sellOutHl / sellInHl) * 100;
-
-  let casesNeeded = 0;
-  let newSellOutHl = sellOutHl;
-  let losAfterSelling = currentLos;
-
-  if (desiredLos > 0 && !isNaN(desiredLos)) {
-    const targetSellOutHl = (sellInHl * desiredLos) / 100;
-    const additionalHlNeeded = targetSellOutHl - sellOutHl;
-    casesNeeded = additionalHlNeeded / HECTOLITER_TO_CASE;
-    newSellOutHl = sellOutHl + additionalHlNeeded;
-    losAfterSelling = sellInHl > 0 ? (newSellOutHl / sellInHl) * 100 : 0;
-  }
-
-  const newSellOutCases = newSellOutHl / HECTOLITER_TO_CASE;
-
-  const safeReceivedStock = isNaN(receivedStock) ? 0 : receivedStock;
-  const safePendingOrders = isNaN(pendingOrders) ? 0 : pendingOrders;
-
-  const newSellInHl = safeReceivedStock > 0 ? (safeReceivedStock * HECTOLITER_TO_CASE) + sellInHl : sellInHl;
-  const newSellInCases = newSellInHl / HECTOLITER_TO_CASE;
-  const losAfterReceiving = newSellInHl > 0 ? (sellOutHl / newSellInHl) * 100 : 0;
-
-  const adjustedSellOut = sellOutCases + safePendingOrders;
-  const predictedLos = sellInCases > 0 ? (adjustedSellOut / sellInCases) * 100 : 0;
-
-  const losStatus = getLosStatus(currentLos);
-
-  return {
-    currentLos: isFinite(currentLos) && !isNaN(currentLos) ? currentLos : 0,
-    sellOutCases: isFinite(sellOutCases) && !isNaN(sellOutCases) ? sellOutCases : 0,
-    sellInCases: isFinite(sellInCases) && !isNaN(sellInCases) ? sellInCases : 0,
-    casesNeeded: isFinite(casesNeeded) && !isNaN(casesNeeded) ? casesNeeded : 0,
-    newSellOutHl: isFinite(newSellOutHl) && !isNaN(newSellOutHl) ? newSellOutHl : sellOutHl,
-    newSellOutCases: isFinite(newSellOutCases) && !isNaN(newSellOutCases) ? newSellOutCases : 0,
-    losAfterSelling: isFinite(losAfterSelling) && !isNaN(losAfterSelling) ? losAfterSelling : 0,
-    newSellInHl: isFinite(newSellInHl) && !isNaN(newSellInHl) ? newSellInHl : sellInHl,
-    newSellInCases: isFinite(newSellInCases) && !isNaN(newSellInCases) ? newSellInCases : 0,
-    losAfterReceiving: isFinite(losAfterReceiving) && !isNaN(losAfterReceiving) ? losAfterReceiving : 0,
-    adjustedSellOut: isFinite(adjustedSellOut) && !isNaN(adjustedSellOut) ? adjustedSellOut : 0,
-    predictedLos: isFinite(predictedLos) && !isNaN(predictedLos) ? predictedLos : 0,
-    losStatus,
-  };
 }
 
 function getLosStatus(los: number): 'critical' | 'optimal' | 'caution' | 'high' {
-  if (los < 93) return 'critical';
-  if (los <= 103) return 'optimal';
-  if (los <= 105) return 'caution';
+  const safeLos = sanitizeNumber(los);
+  if (safeLos < 93) return 'critical';
+  if (safeLos <= 103) return 'optimal';
+  if (safeLos <= 105) return 'caution';
   return 'high';
 }
 
@@ -100,21 +128,25 @@ function getEmptyResult(): LOSResult {
     adjustedSellOut: 0,
     predictedLos: 0,
     losStatus: 'optimal',
+    desiredLos: 0,
   };
 }
 
 export function getSuggestion(status: string, currentLos: number, desiredLos: number): string {
+  const safeLos = sanitizeNumber(currentLos);
+  const safeDesired = sanitizeNumber(desiredLos);
+
   if (status === 'critical') {
-    return `Coverage is critically low at ${currentLos.toFixed(1)}%. You need to accelerate sales velocity or reduce incoming inventory to approach your ${desiredLos.toFixed(0)}% target.`;
+    return `Coverage is critically low at ${safeLos.toFixed(1)}%. You need to accelerate sales velocity or reduce incoming inventory to approach your ${safeDesired.toFixed(0)}% target.`;
   }
   if (status === 'optimal') {
-    return `Excellent performance at ${currentLos.toFixed(1)}%! You're within the optimal range. Continue monitoring demand patterns and maintain current supply chain execution.`;
+    return `Excellent performance at ${safeLos.toFixed(1)}%! You're within the optimal range. Continue monitoring demand patterns and maintain current supply chain execution.`;
   }
   if (status === 'caution') {
-    return `Coverage is elevated at ${currentLos.toFixed(1)}%. Monitor demand closely and consider coordinating with suppliers to adjust future shipment timing.`;
+    return `Coverage is elevated at ${safeLos.toFixed(1)}%. Monitor demand closely and consider coordinating with suppliers to adjust future shipment timing.`;
   }
   if (status === 'high') {
-    return `Coverage is significantly high at ${currentLos.toFixed(1)}%. Coordinate with suppliers to optimize future orders, or accelerate sales initiatives to rebalance inventory.`;
+    return `Coverage is significantly high at ${safeLos.toFixed(1)}%. Coordinate with suppliers to optimize future orders, or accelerate sales initiatives to rebalance inventory.`;
   }
   return 'Analyze your coverage performance and adjust supply accordingly.';
 }
