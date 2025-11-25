@@ -30,14 +30,14 @@ export function Footer() {
           <div>
             <h3 className="font-bold text-cyan-300 mb-3">About</h3>
             <p className="text-sm leading-relaxed">
-              Built for distributors and supply chain professionals who need instant, accurate LOS forecasting.
+              Built for distributors and supply chain professionals who need instant, accurate LOS forecasting and metrics.
             </p>
           </div>
         </div>
 
         <div className="border-t border-cyan-900/30 pt-6">
           <div className="text-center">
-            <p className="text-sm">© {new Date().getFullYear()} SightFlow. Precision LOS forecasting.</p>
+            <p className="text-sm">© {new Date().getFullYear()} SightFlow Metrics. Precision LOS forecasting and analytics.</p>
             <p className="text-xs text-slate-500 mt-2">Helping distributors optimize inventory and maximize performance</p>
           </div>
         </div>

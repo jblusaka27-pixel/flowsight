@@ -20,10 +20,10 @@ export function Header() {
               <TrendingUp size={28} className={isDarkMode ? 'text-cyan-400' : 'text-white'} />
             </div>
             <div>
-              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">SightFlow</h1>
+              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">SightFlow Metrics</h1>
               <p className={`text-sm sm:text-base ${
                 isDarkMode ? 'text-slate-300' : 'text-cyan-50'
-              }`}>Intelligent LOS Forecasting Platform</p>
+              }`}>Line of Sight Analytics & Forecasting</p>
             </div>
           </div>
           <ThemeToggle />

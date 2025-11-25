@@ -26,9 +26,9 @@ export async function exportPDF(data: {
   pdf.rect(0, 0, pageWidth, 35, 'F');
 
   pdf.setTextColor(255, 255, 255);
-  pdf.setFontSize(28);
+  pdf.setFontSize(24);
   pdf.setFont(undefined, 'bold');
-  pdf.text('SightFlow', margin, 15);
+  pdf.text('SightFlow Metrics', margin, 15);
 
   pdf.setFontSize(11);
   pdf.setFont(undefined, 'normal');
@@ -146,13 +146,13 @@ export async function exportPDF(data: {
   pdf.setFontSize(8);
   pdf.setTextColor(120, 120, 120);
   pdf.setFont(undefined, 'normal');
-  pdf.text('SightFlow — Intelligent LOS Forecasting Platform', margin, footerY);
+  pdf.text('SightFlow Metrics — LOS Forecasting & Analytics', margin, footerY);
   pdf.text(`Page 1 of ${pdf.getNumberOfPages()}`, pageWidth - margin - 20, footerY);
 
   pdf.setFontSize(7);
   pdf.text('Optimize inventory. Maximize performance.', margin, footerY + 5);
 
-  pdf.save(`sightflow-report-${Date.now()}.pdf`);
+  pdf.save(`sightflow-metrics-report-${Date.now()}.pdf`);
 }
 
 export function exportCSV(data: {
@@ -165,7 +165,7 @@ export function exportCSV(data: {
   timestamp: Date;
 }) {
   const rows = [
-    ['SightFlow — Line of Sight Report'],
+    ['SightFlow Metrics — Line of Sight Report'],
     [`Generated: ${data.timestamp.toISOString()}`],
     [],
     ['Input Data'],
@@ -222,7 +222,7 @@ export function exportCSV(data: {
   const url = URL.createObjectURL(blob);
 
   link.setAttribute('href', url);
-  link.setAttribute('download', `sightflow-los-report-${Date.now()}.csv`);
+  link.setAttribute('download', `sightflow-metrics-los-report-${Date.now()}.csv`);
   link.style.visibility = 'hidden';
   document.body.appendChild(link);
   link.click();
