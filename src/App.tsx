@@ -14,6 +14,9 @@ import { HistoryPanel } from './components/HistoryPanel';
 import { ClearButton } from './components/ClearButton';
 import { SmartInsights } from './components/SmartInsights';
 import { AnimatedCounter } from './components/AnimatedCounter';
+import { MetricsCharts } from './components/MetricsCharts';
+import { OfflineIndicator } from './components/OfflineIndicator';
+import { InstallPrompt } from './components/InstallPrompt';
 import { calculateLOS } from './utils/calculations';
 import { saveToHistory } from './utils/storage';
 
@@ -94,6 +97,8 @@ export default function App() {
         : 'bg-gradient-to-br from-slate-50 via-cyan-50 to-teal-50'
     }`}>
       <Header />
+      <InstallPrompt />
+      <OfflineIndicator />
 
       <main className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
         {!hasValidInputs && !showCurrentLos && <InfoCard />}
@@ -154,6 +159,17 @@ export default function App() {
                     ? 'Add Desired LOS to see full predictions and scenarios'
                     : 'Enter Sell Out and Sell In to get started'}
                 </p>
+              </div>
+            )}
+
+            {hasValidInputs && (
+              <div className="mt-12">
+                <MetricsCharts
+                  result={result}
+                  desiredLos={parseFloat(desiredLos) || 0}
+                  sellOutHl={parseFloat(sellOutHl) || 0}
+                  sellInHl={parseFloat(sellInHl) || 0}
+                />
               </div>
             )}
           </div>
