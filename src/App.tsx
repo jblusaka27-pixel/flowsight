@@ -17,11 +17,16 @@ import { AnimatedCounter } from './components/AnimatedCounter';
 import { MetricsCharts } from './components/MetricsCharts';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { InstallPrompt } from './components/InstallPrompt';
+import { WelcomeScreen } from './components/WelcomeScreen';
 import { calculateLOS } from './utils/calculations';
 import { saveToHistory } from './utils/storage';
 
 export default function App() {
   const { isDarkMode } = useTheme();
+  const [showWelcome, setShowWelcome] = useState(() => {
+    const hasVisited = localStorage.getItem('sightflow_visited');
+    return !hasVisited;
+  });
   const [sellOutHl, setSellOutHl] = useState<string>('');
   const [sellInHl, setSellInHl] = useState<string>('');
   const [desiredLos, setDesiredLos] = useState<string>('');
@@ -79,6 +84,11 @@ export default function App() {
     setReceivedStock('');
   };
 
+  const handleStartApp = () => {
+    localStorage.setItem('sightflow_visited', 'true');
+    setShowWelcome(false);
+  };
+
   useEffect(() => {
     if (hasValidInputs && result.currentLos > 0) {
       saveToHistory({
@@ -96,6 +106,7 @@ export default function App() {
         ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900'
         : 'bg-gradient-to-br from-slate-50 via-cyan-50 to-teal-50'
     }`}>
+      {showWelcome && <WelcomeScreen onStart={handleStartApp} />}
       <Header />
       <InstallPrompt />
       <OfflineIndicator />
