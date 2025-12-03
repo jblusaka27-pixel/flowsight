@@ -40,7 +40,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           className={`rounded-2xl shadow-2xl overflow-hidden border transition-all duration-300 ${
             isDarkMode
               ? 'bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 border-slate-600'
-              : 'bg-gradient-to-br from-white via-cyan-50 to-blue-50 border-blue-200'
+              : 'bg-gradient-to-br from-white via-cyan-50 to-teal-50 border-cyan-200'
           }`}
         >
           {/* Close Button */}
@@ -49,7 +49,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
             className={`absolute top-4 right-4 p-2 rounded-lg transition-all hover:scale-110 z-10 ${
               isDarkMode
                 ? 'hover:bg-slate-700 text-slate-400'
-                : 'hover:bg-blue-100 text-slate-500'
+                : 'hover:bg-cyan-100 text-slate-500'
             }`}
           >
             <X size={24} />
@@ -60,8 +60,8 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
             <div
               className={`p-8 md:p-12 flex flex-col justify-center items-center text-center relative overflow-hidden ${
                 isDarkMode
-                  ? 'bg-gradient-to-br from-blue-900/30 via-slate-800 to-slate-800'
-                  : 'bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700'
+                  ? 'bg-gradient-to-br from-cyan-900/30 via-slate-800 to-slate-800'
+                  : 'bg-gradient-to-br from-cyan-500 via-cyan-600 to-teal-600'
               }`}
             >
               <div
@@ -73,12 +73,12 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
               <div className="relative z-10 space-y-6">
                 <div className={`inline-flex items-center justify-center w-24 h-24 rounded-2xl ${
                   isDarkMode
-                    ? 'bg-blue-900/50 border-2 border-blue-500/50'
+                    ? 'bg-cyan-900/50 border-2 border-cyan-500/50'
                     : 'bg-white/20 border-2 border-white/30'
                 }`}>
                   <TrendingUp
                     size={48}
-                    className={isDarkMode ? 'text-blue-400' : 'text-white'}
+                    className={isDarkMode ? 'text-cyan-400' : 'text-white'}
                   />
                 </div>
 
@@ -89,7 +89,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
                     SightFlow Metrics
                   </h2>
                   <p className={`text-sm md:text-base ${
-                    isDarkMode ? 'text-blue-200' : 'text-blue-100'
+                    isDarkMode ? 'text-cyan-200' : 'text-cyan-100'
                   }`}>
                     Intelligent LOS Forecasting
                   </p>
@@ -97,20 +97,20 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
 
                 <div className="space-y-3 text-sm md:text-base">
                   <div className="flex items-center gap-2 justify-center">
-                    <BarChart3 size={18} className={isDarkMode ? 'text-blue-400' : 'text-white'} />
-                    <span className={isDarkMode ? 'text-blue-200' : 'text-blue-100'}>
+                    <BarChart3 size={18} className={isDarkMode ? 'text-cyan-400' : 'text-white'} />
+                    <span className={isDarkMode ? 'text-cyan-200' : 'text-cyan-100'}>
                       Real-time Analytics
                     </span>
                   </div>
                   <div className="flex items-center gap-2 justify-center">
-                    <Zap size={18} className={isDarkMode ? 'text-blue-400' : 'text-white'} />
-                    <span className={isDarkMode ? 'text-blue-200' : 'text-blue-100'}>
+                    <Zap size={18} className={isDarkMode ? 'text-cyan-400' : 'text-white'} />
+                    <span className={isDarkMode ? 'text-cyan-200' : 'text-cyan-100'}>
                       Instant Calculations
                     </span>
                   </div>
                   <div className="flex items-center gap-2 justify-center">
-                    <Shield size={18} className={isDarkMode ? 'text-blue-400' : 'text-white'} />
-                    <span className={isDarkMode ? 'text-blue-200' : 'text-blue-100'}>
+                    <Shield size={18} className={isDarkMode ? 'text-cyan-400' : 'text-white'} />
+                    <span className={isDarkMode ? 'text-cyan-200' : 'text-cyan-100'}>
                       Works Offline
                     </span>
                   </div>
@@ -135,8 +135,8 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
 
               <div className="space-y-4">
                 <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
-                    <span className="text-blue-600 font-bold text-sm">1</span>
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center">
+                    <span className="text-cyan-600 font-bold text-sm">1</span>
                   </div>
                   <div>
                     <h4 className={`font-semibold ${
@@ -153,8 +153,8 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
                 </div>
 
                 <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
-                    <span className="text-blue-600 font-bold text-sm">2</span>
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center">
+                    <span className="text-cyan-600 font-bold text-sm">2</span>
                   </div>
                   <div>
                     <h4 className={`font-semibold ${
@@ -171,8 +171,8 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
                 </div>
 
                 <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
-                    <span className="text-blue-600 font-bold text-sm">3</span>
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center">
+                    <span className="text-cyan-600 font-bold text-sm">3</span>
                   </div>
                   <div>
                     <h4 className={`font-semibold ${
@@ -192,7 +192,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
               <div className="pt-4 space-y-3">
                 <button
                   onClick={handleStart}
-                  className="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-semibold flex items-center justify-center gap-2 hover:shadow-lg transition-all hover:scale-105"
+                  className="w-full px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-600 text-white rounded-lg font-semibold flex items-center justify-center gap-2 hover:shadow-lg transition-all hover:scale-105"
                 >
                   Get Started
                   <ArrowRight size={20} />
